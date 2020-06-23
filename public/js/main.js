@@ -36,6 +36,7 @@ const waitForSpotifySDK = async () => {
 }
 
 const setSongInfos = async (currentTrack) => {
+  document.querySelector(".album-preview").classList.remove('inactive')
   document.querySelector(".album-preview").style.background = `url('/ressources/${encodeURIComponent(currentTrack.album.images[0].url)}')`;
   document.querySelector(".current-song-name").innerText = currentTrack.name;
   document.querySelector(".current-artist").innerText = currentTrack.artists.map(artist => ` ${artist.name}`);
@@ -43,6 +44,9 @@ const setSongInfos = async (currentTrack) => {
 }
 
 const updateTime = async () => { 
+
+
+
 
   const position = await statePosition()
   const normalizedProgress = position / playerState.duration * 100;

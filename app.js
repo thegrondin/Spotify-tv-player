@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
-var request = require('request')
-var path = require('path')
+const request = require('request')
+const path = require('path')
 require('custom-env').env('staging')
 
 
