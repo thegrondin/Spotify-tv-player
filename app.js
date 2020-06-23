@@ -16,7 +16,7 @@ app.get('/ressources/:link', (req, res) => {
 app.use('/public', express.static('public'))
 
 app.get('/login', function(req, res) {
-    var scopes = 'user-read-private user-read-email user-read-currently-playing user-read-playback-state';
+    var scopes = 'user-read-private user-read-email user-read-currently-playing user-read-playback-state streaming';
     res.redirect('https://accounts.spotify.com/authorize' +
       '?response_type=code' +
       '&client_id=' + process.env.CLIENT_ID +
