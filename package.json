@@ -1,0 +1,19 @@
+{
+  "name": "spotify-web-player",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm ."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "custom-env": "^2.0.1",
+    "express": "^4.17.1",
+    "form-data": "^3.0.0",
+    "request": "^2.88.2"
+  }
+}
