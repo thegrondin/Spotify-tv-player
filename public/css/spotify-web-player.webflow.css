@@ -116,7 +116,8 @@
   align-items: center;
   border-radius: 20px;
   background-color: #1b1e29;
-  box-shadow: -6px -5px 11px 0 #2d303a, 6px 6px 6px 0 #131720;
+  box-shadow: -6px -5px 11px 0 #2d303a, 6px 6px 6px 0 #131720, inset 0px 0px 0px #14171f, inset 0px 0px 0px #222633;
+
 }
 
 .text-block {
@@ -189,7 +190,9 @@
   align-items: center;
   border-radius: 100%;
   background-color: #1b1e29;
-  box-shadow: -7px -7px 10px -2px #282b38, 6px 6px 10px 1px #12141b;
+  box-shadow: -7px -7px 10px -2px #282b38, 6px 6px 10px 1px #12141b, inset 0px 0px 0px #14171f, inset 0px 0px 0px #222633;
+  transition: all 0.3s ease-in-out;
+
 }
 
 .icon-wrapper.icon-wrapper-content {
@@ -309,4 +312,14 @@
   -ms-flex-align: center;
   align-items: center;
   font-family: Montserrat, sans-serif;
+}
+
+.play-button.active {
+  box-shadow: -0px -0px 0px 0 #2d303a, 0px 0px 0px 0 #131720, inset 7px 7px 10px #14171f, inset -7px -7px 10px #222633;
+  filter: invert(0%);
+}
+
+.play-button.active img {
+  filter: invert(0%);
+  width: 50%
 }

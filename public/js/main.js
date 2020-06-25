@@ -44,10 +44,6 @@ const setSongInfos = async (currentTrack) => {
 }
 
 const updateTime = async () => { 
-
-
-
-
   const position = await statePosition()
   const normalizedProgress = position / playerState.duration * 100;
   document.querySelector('.player-progress').style.width = `${normalizedProgress.toFixed(1)}%`
@@ -63,6 +59,19 @@ const updateTime = async () => {
   document.querySelector('.player-time-indicator .text-block').innerText = `${m}:${s}`
 
   setTimeout(updateTime, 100);
+}
+
+const setPlayState = async (paused) => {
+  
+  let playBtn = document.querySelector('.play-button');
+  if (!paused) {
+    playBtn.classList.add('active');
+    playBtn.querySelector('img').src = 'public/images/pause.svg'
+    return;
+  }
+
+  playBtn.querySelector('img').src = 'public/images/icons8-play-96.png'
+  playBtn.classList.remove('active');
 }
 
 window.onSpotifyWebPlaybackSDKReady = () => {}
@@ -86,6 +95,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {}
 
   player.addListener('player_state_changed', state => { 
     setSongInfos(state.track_window.current_track);
+    setPlayState(state.paused);
 
     playerState.paused = state.paused;
     playerState.duration = state.duration;
