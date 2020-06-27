@@ -4,6 +4,12 @@ const request = require('request')
 const path = require('path')
 require('custom-env').env('staging')
 
+const oAuthSpotifyAccessHeaders = () => {
+    return {
+        'Authorization' : `Basic ${Buffer.from(`${process.env.CLIENT_ID}:${[process.env.CLIENT_SECRET]}`).toString('base64')}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+    };
+}
 
 app.get('/', function (req, res) {
     res.sendFile(path.join(path.resolve() + '/index.html') )
@@ -27,23 +33,32 @@ app.get('/login', function(req, res) {
 app.get('/spotify/access', (req, res) => {
     request.post({
         url : 'https://accounts.spotify.com/api/token', 
-        headers: {
-            'Authorization' : `Basic ${Buffer.from(`${process.env.CLIENT_ID}:${[process.env.CLIENT_SECRET]}`).toString('base64')}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
+        headers: oAuthSpotifyAccessHeaders(),
         form: {
             grant_type : "authorization_code",
             code : req.query.code,
             redirect_uri : 'http://localhost:3000/spotify/access'
         }},
         function (err, remoteResponse, remoteBody) {
-            console.log(remoteBody)
             res.json( JSON.parse(remoteBody))
         }
     )
     
    
 });
+
+app.get('/spotify/refresh', (req, res) => {
+    request.post({
+        url: 'https://accounts.spotify.com/api/token',
+        headers: oAuthSpotifyAccessHeaders(),
+        form: {
+            grant_type: "refresh_token", 
+            refresh_token: req.query.refresh_token
+        }},
+        (err, remoteResponse, remoteBody) => {
+            res.json(JSON.parse(remoteBody))
+        })
+})
 
 app.listen(3000, function () {
     console.log('The application is now listening on port 3000')

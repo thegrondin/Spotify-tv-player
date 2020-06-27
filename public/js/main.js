@@ -2,16 +2,25 @@ if (!window.fetch) throw new Error("Fetch api does not exist on this browser");
   
 let playerState = {};
 
-const SpotifyAccess = async () => {
-  const res = await fetch("login", { mode: 'no-cors' });
-  return res.json();
-}
+const SpotifyAccess = async () => (await fetch("login", { mode: 'no-cors' })).json();
 
 const StoreAccess = async (access) => {
   localStorage.setItem('spotify_access_token', access.access_token);
   localStorage.setItem('spotify_expires_in', access.expires_in);
   localStorage.setItem('spotify_refresh_token', access.refresh_token);
   localStorage.setItem('spotify_token_type', access.token_type);
+}
+
+const refreshToken = async () => {
+  return (await fetch(`spotify/refresh?refresh_token=${encodeURIComponent(localStorage["spotify_refresh_token"])}`, {
+    mode: 'no-cors',
+    method: 'GET'
+  })).json();
+}
+
+const setRefreshInterval = async () => {
+  refreshToken();
+  setTimeout(setRefreshInterval, parseInt(localStorage['spotify_expires_in']) * 1000);
 }
 
 const statePosition = async () => {
@@ -89,6 +98,9 @@ window.onSpotifyWebPlaybackSDKReady = () => {}
 (async () => {
 
   const access = await SpotifyAccess();
+
+  setRefreshInterval();
+
   await StoreAccess(access);
 
   const {Player} = await waitForSpotifySDK();
@@ -104,7 +116,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {}
   player.addListener('playback_error', ({ message }) => { console.error(message); });
 
   player.addListener('player_state_changed', state => { 
-    setSongInfos(state.track_window.current_track);
+
     setPlayState(state.paused);
     setShuffleState(state.shuffle);
 
@@ -113,7 +125,9 @@ window.onSpotifyWebPlaybackSDKReady = () => {}
     playerState.position = state.position;
     playerState.updateTime = performance.now();
 
-    console.log(state)
+    if (!state.track_window) return;
+
+    setSongInfos(state.track_window.current_track);
 
   });
 
