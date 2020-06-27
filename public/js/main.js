@@ -18,7 +18,7 @@ const statePosition = async () => {
   if (playerState.paused) {
       return playerState.position;
   }
-  let position = playerState.position + (performance.now() - playerState.updateTime) ;
+  let position = playerState.position + (performance.now() - playerState.updateTime);
   return position > playerState.duration ? playerState.duration : position;
 }
 
@@ -32,11 +32,11 @@ const waitForSpotifySDK = async () => {
         resolve(window.Spotify);
       }
     }
-  })
+  });
 }
 
 const setSongInfos = async (currentTrack) => {
-  document.querySelector(".album-preview").classList.remove('inactive')
+  document.querySelector(".album-preview").classList.remove('inactive');
   document.querySelector(".album-preview").style.background = `url('/ressources/${encodeURIComponent(currentTrack.album.images[0].url)}')`;
   document.querySelector(".current-song-name").innerText = currentTrack.name;
   document.querySelector(".current-artist").innerText = currentTrack.artists.map(artist => ` ${artist.name}`);
@@ -46,17 +46,17 @@ const setSongInfos = async (currentTrack) => {
 const updateTime = async () => { 
   const position = await statePosition()
   const normalizedProgress = position / playerState.duration * 100;
-  document.querySelector('.player-progress').style.width = `${normalizedProgress.toFixed(1)}%`
-  document.querySelector('.player-time-indicator').style.marginLeft = `calc(${normalizedProgress.toFixed(1)}% - 35px)`
+  document.querySelector('.player-progress').style.width = `${normalizedProgress.toFixed(1)}%`;
+  document.querySelector('.player-time-indicator').style.marginLeft = `calc(${normalizedProgress.toFixed(1)}% - 35px)`;
 
   let h = Math.floor(position/1000/60/60);
   let m = Math.floor((position/1000/60/60 - h)*60);
   let s = Math.floor(((position/1000/60/60 - h)*60 - m)*60);
 
-  s < 10 ? s = `0${s}`: s = `${s}`
-  m < 10 ? m = `0${m}`: m = `${m}`
+  s < 10 ? s = `0${s}`: s = `${s}`;
+  m < 10 ? m = `0${m}`: m = `${m}`;
 
-  document.querySelector('.player-time-indicator .text-block').innerText = `${m}:${s}`
+  document.querySelector('.player-time-indicator .text-block').innerText = `${m}:${s}`;
 
   setTimeout(updateTime, 100);
 }
@@ -66,12 +66,22 @@ const setPlayState = async (paused) => {
   let playBtn = document.querySelector('.play-button');
   if (!paused) {
     playBtn.classList.add('active');
-    playBtn.querySelector('img').src = 'public/images/pause.svg'
+    playBtn.querySelector('img').src = 'public/images/pause.svg';
     return;
   }
 
-  playBtn.querySelector('img').src = 'public/images/icons8-play-96.png'
+  playBtn.querySelector('img').src = 'public/images/icons8-play-96.png';
   playBtn.classList.remove('active');
+}
+
+const setShuffleState = async (shuffle) => {
+  let shuffleButton = document.querySelector('.shuffle-button');
+  if (shuffle) {
+    shuffleButton.classList.add('active');
+    return
+  }
+
+  shuffleButton.classList.remove('active');
 }
 
 window.onSpotifyWebPlaybackSDKReady = () => {}
@@ -96,11 +106,14 @@ window.onSpotifyWebPlaybackSDKReady = () => {}
   player.addListener('player_state_changed', state => { 
     setSongInfos(state.track_window.current_track);
     setPlayState(state.paused);
+    setShuffleState(state.shuffle);
 
     playerState.paused = state.paused;
     playerState.duration = state.duration;
     playerState.position = state.position;
     playerState.updateTime = performance.now();
+
+    console.log(state)
 
   });
 

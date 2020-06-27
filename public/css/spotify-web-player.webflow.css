@@ -314,12 +314,21 @@
   font-family: Montserrat, sans-serif;
 }
 
-.play-button.active {
+.shuffle-button svg {
+  fill: white;
+}
+
+.shuffle-button.active svg {
+  fill: #5cbaf0;
+}
+
+
+.icon-wrapper.active {
   box-shadow: -0px -0px 0px 0 #2d303a, 0px 0px 0px 0 #131720, inset 7px 7px 10px #14171f, inset -7px -7px 10px #222633;
   filter: invert(0%);
 }
 
-.play-button.active img {
+.icon-wrapper.active img {
   filter: invert(0%);
   width: 50%
 }
