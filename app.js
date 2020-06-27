@@ -6,7 +6,7 @@ require('custom-env').env('staging')
 
 
 app.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname + '/index.html') )
+    res.sendFile(path.join(path.resolve() + '/index.html') )
 })
 
 app.get('/ressources/:link', (req, res) => {

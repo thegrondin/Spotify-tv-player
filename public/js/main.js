@@ -117,7 +117,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {}
 
   });
 
-  player.addListener('ready', ({ device_id }) => {
+  player.addListener('ready', () => {
     updateTime();
   });
 
