@@ -42,7 +42,6 @@
   flex: 0 auto;
   border-radius: 100%;
   background-color: #fff;
-  background-image: url('/public/images/icons8-spotify-96.png');
   background-position: 50% 50%;
   background-size: 100%;
   background-repeat: no-repeat;
@@ -54,6 +53,7 @@
   background-size: 100px;
   background-color: transparent;
   background-repeat: no-repeat;
+  background-image: url('/public/images/icons8-spotify-96.png');
 }
 
 .body {

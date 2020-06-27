@@ -44,17 +44,38 @@ const waitForSpotifySDK = async () => {
   });
 }
 
+const isEmpty = (obj) => !obj || Object.keys(obj).length === 0;
+
 const setSongInfos = async (currentTrack) => {
-  document.querySelector(".album-preview").classList.remove('inactive');
-  document.querySelector(".album-preview").style.background = `url('/ressources/${encodeURIComponent(currentTrack.album.images[0].url)}')`;
-  document.querySelector(".current-song-name").innerText = currentTrack.name;
-  document.querySelector(".current-artist").innerText = currentTrack.artists.map(artist => ` ${artist.name}`);
-  document.querySelector(".current-album").innerText = currentTrack.album.name;
+
+  let binding = {
+    album: {},
+    name: "",
+    artists : "",
+
+  }
+
+  if (!isEmpty(currentTrack)) {
+
+    binding.album = {
+      name : currentTrack.album.name,
+      preview : `url('/ressources/${encodeURIComponent(currentTrack.album.images[0].url)}')`
+    };
+
+    binding.name = currentTrack.name;
+    binding.artists = currentTrack.artists.map(artist => ` ${artist.name}`);
+  }
+
+  (!isEmpty(binding.album)) ? document.querySelector(".album-preview").classList.remove('inactive') : document.querySelector(".album-preview").classList.add('inactive');
+  document.querySelector(".album-preview").style.background = binding.album.preview || '';
+  document.querySelector(".current-song-name").innerText = binding.name;
+  document.querySelector(".current-artist").innerText = binding.artists;
+  document.querySelector(".current-album").innerText = binding.album.name || '';
 }
 
 const updateTime = async () => { 
-  const position = await statePosition()
-  const normalizedProgress = position / playerState.duration * 100;
+  const position = await statePosition() || 0;
+  const normalizedProgress = (position / playerState.duration * 100) || 3;
   document.querySelector('.player-progress').style.width = `${normalizedProgress.toFixed(1)}%`;
   document.querySelector('.player-time-indicator').style.marginLeft = `calc(${normalizedProgress.toFixed(1)}% - 35px)`;
 
@@ -71,9 +92,10 @@ const updateTime = async () => {
 }
 
 const setPlayState = async (paused) => {
-  
+
+
   let playBtn = document.querySelector('.play-button');
-  if (!paused) {
+  if (!paused && paused !== undefined) {
     playBtn.classList.add('active');
     playBtn.querySelector('img').src = 'public/images/pause.svg';
     return;
@@ -116,7 +138,10 @@ window.onSpotifyWebPlaybackSDKReady = () => {}
   player.addListener('playback_error', ({ message }) => { console.error(message); });
 
   player.addListener('player_state_changed', state => { 
+    state = state || {};
+    state.track_window = state.track_window || {};
 
+    setSongInfos(state.track_window.current_track);
     setPlayState(state.paused);
     setShuffleState(state.shuffle);
 
@@ -125,9 +150,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {}
     playerState.position = state.position;
     playerState.updateTime = performance.now();
 
-    if (!state.track_window) return;
-
-    setSongInfos(state.track_window.current_track);
 
   });
 
